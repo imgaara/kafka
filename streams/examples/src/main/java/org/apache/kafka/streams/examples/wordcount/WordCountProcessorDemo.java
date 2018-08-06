@@ -61,7 +61,7 @@ public class WordCountProcessorDemo {
                 @SuppressWarnings("unchecked")
                 public void init(final ProcessorContext context) {
                     this.context = context;
-                    this.context.schedule(1000, PunctuationType.STREAM_TIME, new Punctuator() {
+                    this.context.schedule(1000, PunctuationType.WALL_CLOCK_TIME, new Punctuator() {
                         @Override
                         public void punctuate(long timestamp) {
                             try (KeyValueIterator<String, Integer> iter = kvStore.all()) {
@@ -120,7 +120,7 @@ public class WordCountProcessorDemo {
 
         Topology builder = new Topology();
 
-        builder.addSource("Source", "streams-plaintext-input");
+        builder.addSource("Source", "test");
 
         builder.addProcessor("Process", new MyProcessorSupplier(), "Source");
         builder.addStateStore(Stores.keyValueStoreBuilder(
@@ -129,7 +129,7 @@ public class WordCountProcessorDemo {
                 Serdes.Integer()),
                               "Process");
 
-        builder.addSink("Sink", "streams-wordcount-processor-output", "Process");
+//        builder.addSink("Sink", "streams-wordcount-processor-output", "Process");
 
         final KafkaStreams streams = new KafkaStreams(builder, props);
         final CountDownLatch latch = new CountDownLatch(1);
